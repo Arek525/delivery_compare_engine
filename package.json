@@ -1,0 +1,26 @@
+{
+  "name": "delivery_compare_engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arek525/delivery_compare_engine.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arek525/delivery_compare_engine/issues"
+  },
+  "homepage": "https://github.com/Arek525/delivery_compare_engine#readme",
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "playwright": "^1.59.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}
