@@ -1,5 +1,13 @@
 import {chromium, type Page, type Response} from 'playwright';
 
+type TopVenue = {
+    title: string,
+    url: string,
+    deliveryFee: number | null,
+    etaMinutes: number | null,
+    ratingScore: number | null
+};
+
 async function acceptCookies(page: Page): Promise<void>{
     const allowButton = page.locator('[data-test-id="allow-button"]');
     try {
@@ -16,9 +24,16 @@ async function setDeliveryAddress(page: Page, city: string){
     await page.getByRole('option', {name: new RegExp(escapeRegex(city), 'i')}).first().click();
 }
 
-function isWoltFrontResponse(response: Response): boolean{
+async function searchQuery(page: Page, query: string){
+    const queryInput = page.locator('input[data-test-id="SearchInput"]');
+    await queryInput.fill(query);
+    await queryInput.press('Enter');
+}
+
+function isWoltSearchResponse(response: Response): boolean{
     return (
-        response.url().includes('consumer-api.wolt.com/v1/pages/front') &&
+        response.url().includes('restaurant-api.wolt.com/v1/pages/search') &&
+        response.request().method() === 'POST' &&
         response.status() === 200 &&
         (response.headers()['content-type']?.includes('application/json') ?? false)
     );
@@ -28,8 +43,22 @@ function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function extractTopVenues(rawData: any, limit: number): TopVenue[] {
+    const items = (rawData?.sections ?? [])
+        .flatMap((s: any) => s?.items ?? [])
+        .filter((i: any) => i?.template === 'venue' && i?.link?.target && i?.venue);
 
-export async function scrapeWolt(city: string){
+    return items.slice(0, limit).map((i: any) => ({
+        title: i.title ?? i.venue.name ?? 'Unknown',
+        url: i.link.target,
+        deliveryFee: i.venue.delivery_price_int ?? null,
+        etaMinutes: i.venue.estimate ?? null,
+        ratingScore: i.venue.rating?.score ?? null,
+    }));
+}
+
+
+export async function scrapeWolt(city: string, query: string, limit: number){
     const browser = await chromium.launch({headless: false});
     try{
         const context = await browser.newContext();
@@ -39,16 +68,23 @@ export async function scrapeWolt(city: string){
         await page.goto('https://wolt.com');
         await acceptCookies(page);
 
-        const responsePromise = page.waitForResponse(isWoltFrontResponse);
         await setDeliveryAddress(page, city);
+
+        const responsePromise = page.waitForResponse((response) =>
+            isWoltSearchResponse(response));
+
+        await searchQuery(page, query);
 
         const response = await responsePromise;
         const rawData = await response.json();
 
+        const topVenues = extractTopVenues(rawData, limit)
+
         return {
             platform: 'wolt',
             city,
-            rawData
+            query,
+            topVenues
         }
     } finally{
         await browser.close();
