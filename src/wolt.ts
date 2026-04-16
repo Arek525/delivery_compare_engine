@@ -1,4 +1,6 @@
 import {chromium, type Page, type Response} from 'playwright';
+import { writeFile, mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
 
 type TopVenue = {
     title: string,
@@ -7,6 +9,16 @@ type TopVenue = {
     etaMinutes: number | null,
     ratingScore: number | null
 };
+
+async function saveJsonToOutputs(fileName: string, data: unknown): Promise<string> {
+    const outputDir = join(process.cwd(), 'outputs');
+    await mkdir(outputDir, { recursive: true });
+
+    const filePath = join(outputDir, fileName);
+    await writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+
+    return filePath;
+}
 
 async function acceptCookies(page: Page): Promise<void>{
     const allowButton = page.locator('[data-test-id="allow-button"]');
@@ -77,8 +89,10 @@ export async function scrapeWolt(city: string, query: string, limit: number){
 
         const response = await responsePromise;
         const rawData = await response.json();
-
         const topVenues = extractTopVenues(rawData, limit)
+
+        await saveJsonToOutputs('wolt-raw-search.json', rawData);
+        await saveJsonToOutputs('wolt-top-venues.json', topVenues);
 
         return {
             platform: 'wolt',
