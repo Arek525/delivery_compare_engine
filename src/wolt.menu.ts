@@ -100,5 +100,11 @@ export async function enrichVenuesWithCheapestItems(
         }
     }
 
+    venuesWithCheapestItem.sort((a, b) => {
+        if (a.cheapestItemPrice === null) return 1;
+        if (b.cheapestItemPrice === null) return -1;
+        return a.cheapestItemPrice - b.cheapestItemPrice;
+    });
+
     return { firstMenuRaw, venuesWithCheapestItem };
 }
