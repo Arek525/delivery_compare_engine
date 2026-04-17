@@ -55,7 +55,7 @@ function extractTopVenues(rawData: any, limit: number): TopVenue[] {
         url: i.link.target,
         deliveryFee: i.venue.delivery_price_int ?? null,
         etaMinutes: i.venue.estimate ?? null,
-        ratingScore: i.venue.rating?.score ?? null,
+        ratingScore: i.venue.rating?.score ?? null
     }));
 }
 
