@@ -123,6 +123,24 @@ Wolt | Gdańsk | pizza | top 5
    Description: Sos pomidorowy, mozzarella, oliwa, bazylia
    Price: 29.00 zł
    URL: https://wolt.com/en/pol/gdansk/restaurant/felino3c
+
+2. Pizzarium 01
+   Rating: 8
+   Delivery Time: ~35 min
+   Delivery: 0.00 zł
+   Cheapest item: Margherita
+   Description: Sos pomidorowy, Mozzarella Fior di Latte, bazylia
+   Price: 31.00 zł
+   URL: https://wolt.com/en/pol/gdansk/restaurant/pizzarium-01
+
+3. Pizza Cat
+   Rating: 8.8
+   Delivery Time: ~30 min
+   Delivery: 0.00 zł
+   Cheapest item: Margherita 🌱
+   Description: Sos pomidorowy mozzarella
+   Price: 31.00 zł
+   URL: https://wolt.com/en/pol/gdansk/restaurant/pizza-cat
 ```
 
 ## Notes
