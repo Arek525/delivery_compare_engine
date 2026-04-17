@@ -17,7 +17,7 @@ async function saveJsonToOutputs(fileName: string, data: unknown): Promise<strin
 
 
 export async function scrapeWolt(city: string, query: string, limit: number){
-    const browser = await chromium.launch({headless: false});
+    const browser = await chromium.launch({headless: true});
     try{
         const context = await browser.newContext();
         const page = await context.newPage();
